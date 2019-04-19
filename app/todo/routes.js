@@ -22,8 +22,18 @@ const deleteTodo = async (req, res) => {
 	res.json(response);
 };
 
+const editTodo = async (req, res) => {
+	const id = req.params.id;
+	const newContent = req.body.newContent;
+	const response = await model.findByIdAndUpdate(id, {
+		$set: { content: newContent }
+	});
+	res.json(response);
+};
+
 router.get('/', getTodos);
 router.post('/new', createTodo);
 router.delete('/:id', deleteTodo);
+router.put('/:id', editTodo);
 
 module.exports = router;
