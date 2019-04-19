@@ -19,6 +19,19 @@ const createUser = async (req, res) => {
 	}
 };
 
+const getUser = async (req, res) => {
+	const token = req.headers['x-access-token'];
+	if (!token) {
+		res.json({ error: 'no token provided' });
+	}
+	try {
+		const decoded = await jwt.verify(token, config.jwt.secret);
+		res.json(decoded);
+	} catch (err) {
+		res.json({ error: 'invalid token' });
+	}
+};
 router.post('/new', createUser);
+router.get('/', getUser);
 
 module.exports = router;
