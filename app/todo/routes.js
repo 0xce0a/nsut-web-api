@@ -1,18 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const model = require('./model');
+const jwt = require('jsonwebtoken');
+const userModel = require('../user/model');
+const config = require('../config');
 const getTodos = async (req, res) => {
-	const response = await model.find();
-	res.json(response);
+	const token = req.headers['x-access-token'];
+	if (!token) {
+		res.json({ error: 'no token provided' });
+	}
+	try {
+		const decoded = await jwt.verify(token, config.jwt.secret);
+		const user = await userModel.findById(decoded.id);
+		res.json(user);
+	} catch (err) {
+		res.json({ error: 'invalid token' });
+	}
 };
 
 const createTodo = async (req, res) => {
-	const todoContent = req.body.content;
+	const token = req.headers['x-access-token'];
+	if (!token) {
+		res.json({ error: 'no token provided' });
+	}
 	try {
-		const response = await model.create({ content: todoContent });
-		res.json(response);
+		const decoded = await jwt.verify(token, config.jwt.secret);
+		const todoContent = req.body.content;
+		try {
+			const response = await model.create({ content: todoContent });
+			const user = await userModel.findById(decoded.id);
+			if (response) {
+				user.todos.push(response);
+				res.json(response);
+			}
+		} catch (err) {
+			res.json('something went wrong');
+		}
 	} catch (err) {
-		res.json('something went wrong');
+		res.json({ error: 'invalid token' });
 	}
 };
 

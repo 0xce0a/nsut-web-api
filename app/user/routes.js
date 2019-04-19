@@ -26,7 +26,8 @@ const getUser = async (req, res) => {
 	}
 	try {
 		const decoded = await jwt.verify(token, config.jwt.secret);
-		res.json(decoded);
+		const user = await model.findById(decoded.id);
+		res.json(user);
 	} catch (err) {
 		res.json({ error: 'invalid token' });
 	}

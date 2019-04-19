@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const todoModel = require('../todo/model');
 const schema = new mongoose.Schema({
 	email: {
 		type: String,
@@ -8,9 +9,10 @@ const schema = new mongoose.Schema({
 	password: {
 		type: String,
 		required: true
-	}
+	},
+	todos: [todoModel.schema]
 });
 
-const model = mongoose.model('Users', schema);
+const model = mongoose.model('User', schema);
 
 module.exports = model;
