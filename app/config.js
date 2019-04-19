@@ -6,3 +6,6 @@ config.express = {
 config.mongodb = {
 	uri: process.env.MONGO_URI || 'mongodb://localhost:27017/nsut-web-team'
 };
+config.jwt = {
+	secret: 'thisisaveryunsafesecret'
+};

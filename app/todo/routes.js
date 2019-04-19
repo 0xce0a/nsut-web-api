@@ -25,9 +25,13 @@ const deleteTodo = async (req, res) => {
 const editTodo = async (req, res) => {
 	const id = req.params.id;
 	const newContent = req.body.newContent;
-	const response = await model.findByIdAndUpdate(id, {
-		$set: { content: newContent }
-	});
+	const response = await model.findByIdAndUpdate(
+		id,
+		{ new: true },
+		{
+			$set: { content: newContent }
+		}
+	);
 	res.json(response);
 };
 

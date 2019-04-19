@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const todoRoutes = require('./todo/routes');
+const userRoutes = require('./user/routes');
 app.use(express.json());
 
 // set cors headers
@@ -11,6 +12,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/api/todos/', todoRoutes);
+app.use('/api/todo/', todoRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;
