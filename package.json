@@ -1,0 +1,13 @@
+{
+  "name": "nsut-web-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": "https://github.com/0xce0a/nsut-web-api.git",
+  "author": "Sachin Saini <iamsainisachin@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.2"
+  }
+}
