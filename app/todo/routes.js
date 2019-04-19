@@ -16,7 +16,14 @@ const createTodo = async (req, res) => {
 	}
 };
 
+const deleteTodo = async (req, res) => {
+	const id = req.params.id;
+	const response = await model.findByIdAndDelete(id);
+	res.json(response);
+};
+
 router.get('/', getTodos);
 router.post('/new', createTodo);
+router.delete('/:id', deleteTodo);
 
 module.exports = router;
