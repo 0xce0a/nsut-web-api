@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const model = require('./model');
+const user = require('./model');
 const config = require('../config');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { verifyJWT } = require('../utils');
 const createUser = async (req, res) => {
 	const email = req.body.email;
 	const passwordHash = bcrypt.hashSync(req.body.password, 8);
 	try {
-		const user = await model.create({ email: email, password: passwordHash });
-		if (user) {
-			const token = jwt.sign({ id: user._id }, config.jwt.secret);
+		const newUser = await user.create({ email: email, password: passwordHash });
+		if (newUser) {
+			const token = jwt.sign({ id: newUser._id }, config.jwt.secret);
 			res.json({ auth: true, token: token });
 		}
 	} catch (err) {
@@ -21,15 +22,20 @@ const createUser = async (req, res) => {
 
 const getUser = async (req, res) => {
 	const token = req.headers['x-access-token'];
-	if (!token) {
-		res.json({ error: 'no token provided' });
-	}
-	try {
-		const decoded = await jwt.verify(token, config.jwt.secret);
-		const user = await model.findById(decoded.id);
-		res.json(user);
-	} catch (err) {
-		res.json({ error: 'invalid token' });
+	let decodedRes = await verifyJWT(token);
+	if (decodedRes.error) {
+		res.json(decodedRes);
+	} else {
+		user
+			.findById(decodedRes.id)
+			.populate('todos')
+			.exec((err, data) => {
+				if (err) {
+					res.json(err);
+				} else {
+					res.json(data);
+				}
+			});
 	}
 };
 router.post('/new', createUser);

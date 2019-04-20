@@ -3,24 +3,24 @@ const router = express.Router();
 const todo = require('./model');
 const user = require('../user/model');
 const { verifyJWT } = require('../utils');
-const getTodos = async (req, res) => {
-	const token = req.headers['x-access-token'];
-	let decodedRes = await verifyJWT(token);
-	if (decodedRes.error) {
-		res.json(decodedRes);
-	} else {
-		user
-			.findById(decodedRes.id)
-			.populate('todos')
-			.exec((err, data) => {
-				if (err) {
-					res.json(err);
-				} else {
-					res.json(data);
-				}
-			});
-	}
-};
+// const getTodos = async (req, res) => {
+// 	const token = req.headers['x-access-token'];
+// 	let decodedRes = await verifyJWT(token);
+// 	if (decodedRes.error) {
+// 		res.json(decodedRes);
+// 	} else {
+// 		user
+// 			.findById(decodedRes.id)
+// 			.populate('todos')
+// 			.exec((err, data) => {
+// 				if (err) {
+// 					res.json(err);
+// 				} else {
+// 					res.json(data);
+// 				}
+// 			});
+// 	}
+// };
 
 const createTodo = async (req, res) => {
 	const token = req.headers['x-access-token'];
@@ -80,7 +80,7 @@ const editTodo = async (req, res) => {
 	}
 };
 
-router.get('/', getTodos);
+// router.get('/', getTodos);
 router.post('/new', createTodo);
 router.delete('/:id', deleteTodo);
 router.put('/:id', editTodo);
