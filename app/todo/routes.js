@@ -53,6 +53,7 @@ const deleteTodo = async (req, res) => {
 		userData.todos = userData.todos.filter(todo => {
 			return todo != id;
 		});
+		await userData.save();
 		const response = await todo.findByIdAndDelete(id);
 		res.json(response);
 	}
