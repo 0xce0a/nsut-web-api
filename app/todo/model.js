@@ -7,6 +7,20 @@ const schema = new mongoose.Schema({
 	createdOn: {
 		type: Date,
 		default: Date.now()
+	},
+	owner: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+		select: false
+	},
+	collaborators: {
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'User'
+			}
+		],
+		select: false
 	}
 });
 
