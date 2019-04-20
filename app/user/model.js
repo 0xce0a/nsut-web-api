@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const todoModel = require('../todo/model');
 const schema = new mongoose.Schema({
 	email: {
 		type: String,
@@ -8,9 +7,15 @@ const schema = new mongoose.Schema({
 	},
 	password: {
 		type: String,
-		required: true
+		required: true,
+		select: false
 	},
-	todos: [todoModel.schema]
+	todos: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Todo'
+		}
+	]
 });
 
 const model = mongoose.model('User', schema);

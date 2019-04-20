@@ -1,63 +1,82 @@
 const express = require('express');
 const router = express.Router();
-const model = require('./model');
-const jwt = require('jsonwebtoken');
-const userModel = require('../user/model');
-const config = require('../config');
+const todo = require('./model');
+const user = require('../user/model');
+const { verifyJWT } = require('../utils');
 const getTodos = async (req, res) => {
 	const token = req.headers['x-access-token'];
-	if (!token) {
-		res.json({ error: 'no token provided' });
-	}
-	try {
-		const decoded = await jwt.verify(token, config.jwt.secret);
-		const user = await userModel.findById(decoded.id);
-		res.json(user);
-	} catch (err) {
-		res.json({ error: 'invalid token' });
+	let decodedRes = await verifyJWT(token);
+	if (decodedRes.error) {
+		res.json(decodedRes);
+	} else {
+		user
+			.findById(decodedRes.id)
+			.populate('todos')
+			.exec((err, data) => {
+				if (err) {
+					res.json(err);
+				} else {
+					res.json(data);
+				}
+			});
 	}
 };
 
 const createTodo = async (req, res) => {
 	const token = req.headers['x-access-token'];
-	if (!token) {
-		res.json({ error: 'no token provided' });
-	}
-	try {
-		const decoded = await jwt.verify(token, config.jwt.secret);
-		const todoContent = req.body.content;
-		try {
-			const response = await model.create({ content: todoContent });
-			const user = await userModel.findById(decoded.id);
-			if (response) {
-				user.todos.push(response);
-				res.json(response);
-			}
-		} catch (err) {
-			res.json('something went wrong');
-		}
-	} catch (err) {
-		res.json({ error: 'invalid token' });
+	let decodedRes = await verifyJWT(token);
+	if (decodedRes.error) {
+		res.json(decodedRes);
+	} else {
+		let fetchedUser = await user.findById(decodedRes.id);
+		let newTodo = await todo.create({ content: req.body.content });
+		fetchedUser.todos.push(newTodo);
+		fetchedUser
+			.save()
+			.then(() => {
+				res.json(newTodo);
+			})
+			.catch(err => {
+				res.json(err);
+			});
 	}
 };
 
 const deleteTodo = async (req, res) => {
 	const id = req.params.id;
-	const response = await model.findByIdAndDelete(id);
-	res.json(response);
+	const token = req.headers['x-access-token'];
+	let decodedRes = await verifyJWT(token);
+	if (decodedRes.error) {
+		res.json(decodedRes);
+	} else {
+		const response = await todo.findByIdAndDelete(id);
+		res.json(response);
+	}
 };
 
 const editTodo = async (req, res) => {
 	const id = req.params.id;
-	const newContent = req.body.newContent;
-	const response = await model.findByIdAndUpdate(
-		id,
-		{ new: true },
-		{
-			$set: { content: newContent }
-		}
-	);
-	res.json(response);
+	const token = req.headers['x-access-token'];
+	let decodedRes = await verifyJWT(token);
+	if (decodedRes.error) {
+		res.json(decodedRes);
+	} else {
+		const newContent = req.body.newContent;
+		// const response = await todo.findByIdAndUpdate(
+		// 	id,
+		// 	{ new: true },
+		// 	{
+		// 		$set: { content: newContent }
+		// 	}
+		// );
+		// res.json(response);
+		const response = await todo.findByIdAndUpdate(id, {
+			$set: {
+				content: newContent
+			}
+		});
+		console.log(response);
+	}
 };
 
 router.get('/', getTodos);
