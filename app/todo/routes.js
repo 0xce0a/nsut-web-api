@@ -49,6 +49,10 @@ const deleteTodo = async (req, res) => {
 	if (decodedRes.error) {
 		res.json(decodedRes);
 	} else {
+		let userData = await user.findById(decodedRes.id);
+		userData.todos = userData.todos.filter(todo => {
+			return todo != id;
+		});
 		const response = await todo.findByIdAndDelete(id);
 		res.json(response);
 	}
