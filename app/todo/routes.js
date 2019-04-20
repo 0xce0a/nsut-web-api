@@ -62,20 +62,16 @@ const editTodo = async (req, res) => {
 		res.json(decodedRes);
 	} else {
 		const newContent = req.body.newContent;
-		// const response = await todo.findByIdAndUpdate(
-		// 	id,
-		// 	{ new: true },
-		// 	{
-		// 		$set: { content: newContent }
-		// 	}
-		// );
-		// res.json(response);
-		const response = await todo.findByIdAndUpdate(id, {
-			$set: {
-				content: newContent
-			}
-		});
-		console.log(response);
+		const response = await todo.findByIdAndUpdate(
+			id,
+			{
+				$set: {
+					content: newContent
+				}
+			},
+			{ new: true }
+		);
+		res.json(response);
 	}
 };
 
