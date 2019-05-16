@@ -14,13 +14,8 @@ const schema = new mongoose.Schema({
 		select: false
 	},
 	collaborators: {
-		type: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'User'
-			}
-		],
-		select: false
+		type: [],
+		select: true
 	}
 });
 

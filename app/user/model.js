@@ -15,7 +15,8 @@ const schema = new mongoose.Schema({
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Todo'
 		}
-	]
+	],
+	permissionedTodos: []
 });
 
 const model = mongoose.model('User', schema);
